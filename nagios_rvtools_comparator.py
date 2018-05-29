@@ -8,8 +8,11 @@ args = parse_args()
 with pd.ExcelWriter("res/" + "Report confronto " + args["name"] + ".xlsx") as excel_writer:
     # import files to compare: monitoring (status sheet) and rvtools (network)
     monitoring_file = pd.read_excel(args["monitoring"], sheet_name="Status")
-    rvtools_file = pd.read_excel(args["rvtools"], sheet_name="vNetwork", na_values="unknown").\
-        dropna(subset=["IP Address"])
+    rvtools_file = pd.read_excel(
+            args["rvtools"],
+            sheet_name="vNetwork",
+            na_values="unknown")
+    rvtools_file = rvtools_file.dropna(subset=["IP Address"])[rvtools_file["Powerstate"] == "poweredOn"]
 
     # pick each vm with its ip address in rvtools
     rvtools_name_ip = dict(zip(list(rvtools_file["VM"]), [list(filter(
